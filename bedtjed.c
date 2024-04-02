@@ -1,3 +1,4 @@
+#include "events.h"
 #define _POSIX_C_SOURCE 200809L
 
 #include <stdio.h>
@@ -40,17 +41,27 @@ void loop(State* state) {
     handle_event(state, &evt);
 }
 
+void move_cursor(State* state, Direction dr) {
+    // TODO: implement
+}
+
 size_t get_drawable_height(void) {
     return (size_t)(tb_height() - 1);
 } // FIXME: variable bottom bar size
 
 size_t get_drawable_width(void) {
     return tb_width();
-} // FIXME: when scrolling is added
+} // FIXME: when h-scrolling is added
 
 static void handle_event(State* state, const struct tb_event* evt) {
-    if (evt->key == TB_KEY_ESC)
-        state->should_exit = true;
+    bool is_valid = false;
+    for (size_t i = 0; i < sizeof(VALID_EVENTS); i++)
+        is_valid = evt->key == VALID_EVENTS[i];
+
+    if (!is_valid)
+        event_insult_user(state, NULL);
+    else
+        EVENT_FUNC[EVENT_KEY[evt->key]](state, evt);
 }
 
 static void draw_line(State* state, Line* line, size_t rel_lineno) {

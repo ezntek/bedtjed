@@ -7,6 +7,13 @@
 
 #include "config.h"
 
+typedef enum {
+    D_UP,
+    D_DOWN,
+    D_LEFT,
+    D_RIGHT,
+} Direction;
+
 typedef struct {
     uint32_t x;
     uint32_t y;
@@ -51,7 +58,7 @@ typedef struct {
     size_t aabit_count;
 } State;
 
-typedef void (*EventHandler)(State* state, struct tb_event* evt);
+typedef void (*EventHandler)(State* state, const struct tb_event* evt);
 
 size_t get_drawable_height(void);
 size_t get_drawable_width(void);
@@ -59,6 +66,7 @@ size_t get_drawable_width(void);
 void init(State* state, const char* filename);
 void deinit(State* state);
 void loop(State* state);
+void move_cursor(State* state, Direction dr);
 
 Buffer Buffer_new(const char* filename);
 void Buffer_deinit(Buffer* b);

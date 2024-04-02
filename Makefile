@@ -1,4 +1,4 @@
-OBJ = main.o bedtjed.o tb2.o
+OBJ = main.o bedtjed.o tb2.o events.o
 CFLAGS ?= -O2 -march=native -Wall -Wpedantic
 CC ?= gcc
 
@@ -7,6 +7,7 @@ build: $(OBJ)
 
 main.o:
 bedtjed.o:
+events.o:
 tb2.o:
 	$(CC) $(CFLAGS) -DTB_IMPL -c -o tb2.o tb2.c
 
