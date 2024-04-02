@@ -1,0 +1,12 @@
+line|
+another line|
+
+some|
+
+    tabs|
+        here|
+
+trailing tabs           |
+   some spaces     |
+
+done|

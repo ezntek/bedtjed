@@ -8,6 +8,7 @@ build: $(OBJ)
 main.o:
 bedtjed.o:
 tb2.o:
+	$(CC) $(CFLAGS) -DTB_IMPL -c -o tb2.o tb2.c
 
 clean:
 	rm -f $(OBJ) bedtjed

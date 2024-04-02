@@ -1,9 +1,11 @@
 #pragma once
 
-#include "config.h"
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
+
+#include "config.h"
 
 typedef struct {
     uint32_t x;
@@ -22,6 +24,13 @@ typedef struct {
 } Cursor;
 
 typedef struct {
+    Line* lines;
+    size_t lines_len;
+    size_t begin_line;
+    size_t end_line;
+} Buffer_View;
+
+typedef struct {
     FILE* filep;
     const char* filename;
     Cursor cursor;
@@ -29,6 +38,8 @@ typedef struct {
     Line* lines;
     size_t lines_len;
     size_t lines_cap;
+
+    Buffer_View viewport;
 } Buffer;
 
 typedef struct {
@@ -36,15 +47,20 @@ typedef struct {
     size_t curr_buf_index;
     size_t nbufs;
     Buffer* curr_buf;
-
+    bool should_exit;
+    size_t aabit_count;
 } State;
 
-typedef struct tb_event Tb_Event;
-typedef void (*EventHandler)(State* state, Tb_Event* evt);
+typedef void (*EventHandler)(State* state, struct tb_event* evt);
+
+size_t get_drawable_height(void);
+size_t get_drawable_width(void);
 
 void init(State* state, const char* filename);
 void deinit(State* state);
-void read_file(State* state);
+void loop(State* state);
 
 Buffer Buffer_new(const char* filename);
 void Buffer_deinit(Buffer* b);
+
+Buffer_View Buffer_View_new(Buffer* b);
