@@ -1,12 +1,13 @@
-#include "events.h"
 #define _POSIX_C_SOURCE 200809L
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include "bedtjed.h"
 #include "config.h"
+#include "events.h"
 
 static void Buffer_open_file(Buffer* b, const char* filename);
 static void Buffer_read_file_pre(Buffer* b);
@@ -16,6 +17,7 @@ static void handle_event(State* state, const struct tb_event* evt);
 
 void init(State* state, const char* filename) {
     tb_init();
+    srand(time(NULL));
     state->bufs[0] = Buffer_new(filename);
     state->curr_buf_index = 0;
     state->curr_buf = &state->bufs[state->curr_buf_index];
@@ -26,6 +28,8 @@ void deinit(State* state) {
     for (size_t i = 0; i < state->nbufs; i++)
         Buffer_deinit(&state->bufs[i]);
     tb_shutdown();
+
+    puts("\033[1mBye\033[0m");
 }
 
 void loop(State* state) {
@@ -41,27 +45,34 @@ void loop(State* state) {
     handle_event(state, &evt);
 }
 
+void clear_bar(void) {
+    for (size_t i = 0; i < tb_width(); i++)
+        tb_set_cell(i, BAR_Y, ' ', TB_DEFAULT, TB_DEFAULT);
+}
+
+void notify(const char* msg) {
+    clear_bar();
+    tb_print(0, BAR_Y, TB_DEFAULT, TB_DEFAULT, msg);
+}
+
 void move_cursor(State* state, Direction dr) {
     // TODO: implement
 }
 
-size_t get_drawable_height(void) {
-    return (size_t)(tb_height() - 1);
-} // FIXME: variable bottom bar size
+size_t get_drawable_height(void) { return (size_t)(tb_height() - 2); }
 
 size_t get_drawable_width(void) {
     return tb_width();
 } // FIXME: when h-scrolling is added
 
 static void handle_event(State* state, const struct tb_event* evt) {
-    bool is_valid = false;
-    for (size_t i = 0; i < sizeof(VALID_EVENTS); i++)
-        is_valid = evt->key == VALID_EVENTS[i];
-
-    if (!is_valid)
+    // these are for "keys" (special keys)
+    if (!is_key_valid_event(evt->key)) {
         event_insult_user(state, NULL);
-    else
+    } else {
+        clear_bar();
         EVENT_FUNC[EVENT_KEY[evt->key]](state, evt);
+    }
 }
 
 static void draw_line(State* state, Line* line, size_t rel_lineno) {

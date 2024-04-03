@@ -12,8 +12,10 @@ int main(int argc, char** argv) {
 
     State state = {0};
     init(&state, argv[1]);
+
     while (!state.should_exit)
         loop(&state);
+
     deinit(&state);
     return 0;
 }

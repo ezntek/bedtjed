@@ -6,3 +6,4 @@
 #define CURSOR_BG   TB_RED
 #define CURSOR_FG   TB_GREEN
 #define MAX_BUFS    3
+#define INSULT_ME   1

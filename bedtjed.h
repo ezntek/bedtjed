@@ -2,10 +2,11 @@
 
 #include <stdbool.h>
 #include <stddef.h>
-#include <stdint.h>
-#include <stdio.h>
 
 #include "config.h"
+
+#define LEN(arr) sizeof(arr) / sizeof(*arr)
+#define BAR_Y    (tb_height() - 1)
 
 typedef enum {
     D_UP,
@@ -55,7 +56,6 @@ typedef struct {
     size_t nbufs;
     Buffer* curr_buf;
     bool should_exit;
-    size_t aabit_count;
 } State;
 
 typedef void (*EventHandler)(State* state, const struct tb_event* evt);
@@ -67,6 +67,8 @@ void init(State* state, const char* filename);
 void deinit(State* state);
 void loop(State* state);
 void move_cursor(State* state, Direction dr);
+void notify(const char* msg);
+void clear_bar(void);
 
 Buffer Buffer_new(const char* filename);
 void Buffer_deinit(Buffer* b);
