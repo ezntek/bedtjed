@@ -1,9 +1,0 @@
-CompileFlags:
-    Remove:
-        - '-Wc99-designator'
-    Add:
-        - '-xc'
-        - '-std=c99'
-        - '-I./external/paho-mqtt-c/src'
-        - '-I./external/json-c'
-        - '-DTB_IMPL'
